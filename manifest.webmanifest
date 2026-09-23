@@ -1,0 +1,10 @@
+{
+  "name": "DEZ MONEY \u2014 Glow Edition",
+  "short_name": "DEZ MONEY",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#04100b",
+  "theme_color": "#04100b",
+  "description": "Neon money-themed monthly financial planner."
+}

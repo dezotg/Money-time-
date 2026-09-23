@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#04100b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DEZ MONEY">
+<link rel="manifest" href="manifest.webmanifest">
+<title>DEZ MONEY</title>
+<style>
+:root{
+  --bg:#030906;
+  --panel:rgba(8,19,14,.82);
+  --panel2:rgba(8,15,12,.92);
+  --line:rgba(141,255,203,.18);
+  --text:#f2fff7;
+  --muted:#99b7a7;
+  --green:#3cff93;
+  --green2:#89ffd2;
+  --green3:#14d96d;
+  --gold:#f4c76a;
+  --red:#ff7070;
+  --shadow:0 16px 44px rgba(0,0,0,.36);
+  --glow:0 0 0 1px rgba(130,255,197,.18), 0 0 24px rgba(32,255,146,.12);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(44,255,156,.18), transparent 20%),
+    radial-gradient(circle at 100% 5%, rgba(37,211,238,.14), transparent 18%),
+    radial-gradient(circle at 50% 100%, rgba(30,120,76,.18), transparent 35%),
+    linear-gradient(180deg, #020604 0%, #07110d 100%);
+  min-height:100vh;
+  padding-bottom:110px;
+  overflow-x:hidden;
+}
+.money-bg{
+  position:fixed; inset:0; pointer-events:none; overflow:hidden; opacity:.22; z-index:0;
+}
+.bill{
+  position:absolute; color:#b5ffd4; font-weight:900; font-size:40px; filter:blur(.2px);
+  text-shadow:0 0 18px rgba(0,255,163,.18);
+  transform:rotate(var(--r));
+}
+.bill.small{font-size:22px; opacity:.7}
+.bill.big{font-size:62px; opacity:.28}
+.wrap{position:relative; z-index:1; max-width:920px; margin:auto; padding:18px 14px 24px}
+.top{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:10px}
+.logo{display:flex; flex-direction:column; gap:4px}
+.logo-title{
+  font-size:34px; font-weight:1000; letter-spacing:.06em; line-height:.95;
+  text-transform:uppercase;
+}
+.logo-title .dez{
+  background:linear-gradient(180deg,#b4ffdf,#3cff93 55%,#089652);
+  -webkit-background-clip:text; color:transparent;
+  text-shadow:0 0 26px rgba(60,255,147,.2);
+}
+.logo-title .money{
+  background:linear-gradient(180deg,#f7fffb,#bfd8c8 65%,#7ea092);
+  -webkit-background-clip:text; color:transparent;
+}
+.logo-sub{
+  color:#d6ffe7; letter-spacing:.35em; font-size:12px; text-transform:uppercase; opacity:.92;
+}
+.tag{
+  border:1px solid rgba(255,222,130,.26);
+  color:#ffe6a8;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(255,220,111,.06);
+  font-weight:800; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+  white-space:nowrap;
+}
+.hero, .card{
+  background:linear-gradient(180deg, rgba(10,20,15,.78), rgba(3,10,7,.92));
+  border:1px solid var(--line);
+  border-radius:26px;
+  box-shadow:var(--shadow), var(--glow);
+  backdrop-filter:blur(12px);
+}
+.hero{padding:18px; overflow:hidden; position:relative; margin-bottom:14px}
+.hero::before{
+  content:""; position:absolute; right:-40px; top:-40px; width:260px; height:260px; border-radius:50%;
+  background:radial-gradient(circle, rgba(60,255,147,.18), transparent 60%);
+}
+.hero::after{
+  content:"$"; position:absolute; right:18px; top:8px; font-size:180px; font-weight:1000; color:rgba(164,255,210,.06);
+}
+.hero-grid{display:grid; grid-template-columns:1.2fr .8fr; gap:14px; align-items:center}
+.kicker{font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:#bffff1; font-weight:900}
+.big{
+  font-size:62px; line-height:.95; font-weight:1000; margin:6px 0;
+  text-shadow:0 0 26px rgba(60,255,147,.12);
+}
+.money-pos{color:#9affbf}
+.money-neg{color:#ff9d9d}
+.muted{color:var(--muted)}
+.quote{
+  font-size:14px; letter-spacing:.14em; text-transform:uppercase; color:#dcfff0; text-align:center;
+}
+.motto{
+  font-size:11px; letter-spacing:.34em; text-transform:uppercase; color:#9ceab9; margin-top:10px
+}
+.mini-chart{
+  height:170px; position:relative; display:flex; align-items:flex-end; justify-content:center; gap:12px;
+}
+.bar{
+  width:24px; border-radius:12px 12px 0 0; background:linear-gradient(180deg,rgba(134,255,208,.95),rgba(32,176,98,.28));
+  box-shadow:0 0 18px rgba(62,255,156,.18);
+}
+.money-stack{
+  position:absolute; right:10px; bottom:6px; font-size:40px; opacity:.72; filter:drop-shadow(0 0 18px rgba(62,255,156,.18));
+}
+.grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px}
+.metric{
+  padding:16px;
+}
+.metric .topline{display:flex; align-items:center; justify-content:space-between; gap:8px}
+.metric .icon{
+  width:44px; height:44px; border-radius:14px; display:grid; place-items:center;
+  background:linear-gradient(180deg, rgba(42,255,153,.22), rgba(42,255,153,.08));
+  border:1px solid rgba(130,255,197,.16);
+  font-size:22px;
+}
+.metric b{display:block; font-size:20px; margin-top:8px}
+.metric .sub{margin-top:6px; font-weight:800}
+.two-col{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+.card{padding:16px}
+.title{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight:950;
+  font-size:18px; margin-bottom:10px
+}
+.title-left{display:flex; align-items:center; gap:10px}
+.title-icon{
+  width:36px; height:36px; border-radius:12px; display:grid; place-items:center;
+  background:linear-gradient(180deg, rgba(42,255,153,.22), rgba(42,255,153,.08));
+  border:1px solid rgba(130,255,197,.16); font-size:18px
+}
+.badge{
+  padding:5px 9px; border-radius:999px; font-size:11px; font-weight:900;
+  border:1px solid rgba(130,255,197,.16); color:#c8ffe0; background:rgba(53,255,168,.08)
+}
+.bill-row, .income-row{
+  display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+  padding:11px 0; border-top:1px solid rgba(255,255,255,.07)
+}
+.bill-row:first-child,.income-row:first-child,.plan-row:first-child{border-top:0}
+.bill-name{font-weight:800}
+.bill-meta{font-size:13px; color:var(--muted); margin-top:3px}
+.total-row{
+  margin-top:12px; padding-top:14px; border-top:1px solid rgba(255,255,255,.09);
+  display:flex; justify-content:space-between; align-items:center; font-size:17px; font-weight:900
+}
+.total-row .total{font-size:20px; color:#87ffc7}
+.plan-row{
+  display:grid; grid-template-columns:1fr auto auto; gap:10px; align-items:center;
+  padding:12px; border:1px solid rgba(130,255,197,.12);
+  border-radius:18px; margin-top:10px;
+  background:linear-gradient(180deg, rgba(16,36,26,.62), rgba(8,17,13,.9));
+}
+.plan-row .left{display:flex; gap:12px; align-items:center}
+.plan-row .icon{
+  width:44px; height:44px; border-radius:14px; display:grid; place-items:center; font-size:22px;
+  background:linear-gradient(180deg, rgba(42,255,153,.22), rgba(42,255,153,.08));
+  border:1px solid rgba(130,255,197,.16);
+}
+.plan-row .amount{font-size:18px; font-weight:1000; color:#9affbf}
+.plan-row .pct{font-weight:900; color:#dfffee}
+.plan-row input{
+  width:92px; text-align:right; padding:10px 12px; border-radius:12px;
+}
+.controls .field, .settings-card .field{
+  margin-top:10px;
+}
+.row{display:flex; gap:10px}
+.row > *{flex:1}
+button, input, select{
+  font:inherit;
+}
+button{
+  border:0; border-radius:14px; padding:12px 14px; font-weight:900; color:white; cursor:pointer;
+  background:#14311f;
+}
+button.primary{background:linear-gradient(90deg,#0f8f4d,#2dff92); color:#03210f}
+button.dark{background:#14221a}
+button.danger{background:#421d1d; color:#ffd2d2}
+button.small{padding:8px 10px; font-size:12px}
+input, select{
+  width:100%; padding:12px; border-radius:14px;
+  background:#07120d; color:white; border:1px solid rgba(130,255,197,.14); outline:none;
+}
+input::placeholder{color:#76937f}
+.note{
+  font-size:12px; color:#8ea897; text-align:center; margin-top:14px
+}
+.view{display:none}
+.view.active{display:block}
+nav{
+  position:fixed; left:0; right:0; bottom:0; z-index:10;
+  background:rgba(2,8,5,.92); backdrop-filter:blur(16px);
+  border-top:1px solid rgba(255,255,255,.06);
+  padding:8px 12px calc(8px + env(safe-area-inset-bottom));
+}
+.nav{
+  max-width:920px; margin:auto; display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
+}
+.nav button{
+  background:transparent; color:#8da396; padding:9px 4px; font-size:12px; border-radius:14px
+}
+.nav button.active{
+  background:rgba(52,255,164,.1); color:#d7ffeb; box-shadow:inset 0 0 0 1px rgba(130,255,197,.12)
+}
+.inline-remove{margin-left:10px}
+@media(max-width:780px){
+  .hero-grid,.two-col,.grid3{grid-template-columns:1fr}
+  .big{font-size:48px}
+  .plan-row{grid-template-columns:1fr}
+  .plan-row input{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="money-bg">
+  <div class="bill small" style="left:2%; top:3%; --r:-15deg;">$</div>
+  <div class="bill big" style="right:7%; top:4%; --r:10deg;">100</div>
+  <div class="bill small" style="left:8%; top:30%; --r:18deg;">$</div>
+  <div class="bill" style="right:3%; top:40%; --r:-12deg;">$</div>
+  <div class="bill small" style="left:6%; bottom:20%; --r:-18deg;">100</div>
+  <div class="bill big" style="right:2%; bottom:12%; --r:8deg;">$</div>
+</div>
+
+<div class="wrap">
+  <div class="top">
+    <div class="logo">
+      <div class="logo-title"><span class="dez">DEZ</span> <span class="money">MONEY</span></div>
+      <div class="logo-sub">Discipline Builds Freedom</div>
+    </div>
+    <div class="tag">Wealth Is a Habit</div>
+  </div>
+
+  <section id="home" class="view active">
+    <div class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="kicker">Monthly Cash Flow</div>
+          <div class="big money-pos" id="availableBig">$0</div>
+          <div class="muted" id="monthText">Available after bills</div>
+          <div class="motto">Same goals. Bigger checks.</div>
+        </div>
+        <div>
+          <div class="quote">“A budget today builds the life you want tomorrow.”</div>
+          <div class="mini-chart">
+            <div class="bar" style="height:56px"></div>
+            <div class="bar" style="height:92px"></div>
+            <div class="bar" style="height:128px"></div>
+            <div class="bar" style="height:84px"></div>
+            <div class="bar" style="height:112px"></div>
+            <div class="money-stack">💵💵</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid3">
+      <div class="card metric">
+        <div class="topline">
+          <div class="icon">💰</div>
+          <div class="badge">Income</div>
+        </div>
+        <b id="incomeTotal">$0</b>
+        <div class="sub money-pos" id="incomeSub">Add your income</div>
+      </div>
+
+      <div class="card metric">
+        <div class="topline">
+          <div class="icon">🧾</div>
+          <div class="badge">Bills</div>
+        </div>
+        <b id="billTotal">$4,302</b>
+        <div class="sub muted" id="billSub">11 bills</div>
+      </div>
+
+      <div class="card metric">
+        <div class="topline">
+          <div class="icon">👛</div>
+          <div class="badge">Available</div>
+        </div>
+        <b id="availableTotal">$0</b>
+        <div class="sub money-pos" id="availableSub">Ready to assign</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="title">
+          <div class="title-left">
+            <div class="title-icon">📋</div>
+            <span>Monthly Bills</span>
+          </div>
+          <span class="badge" id="billCount">11 bills</span>
+        </div>
+        <div id="homeBills"></div>
+        <div class="total-row">
+          <span>Total Monthly Bills</span>
+          <span class="total" id="homeBillsTotal">$4,302</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="title">
+          <div class="title-left">
+            <div class="title-icon">🎯</div>
+            <span>Leftover Money Plan</span>
+          </div>
+          <span class="badge" id="leftoverBadge">Plan it out</span>
+        </div>
+        <div class="bill-meta" id="leftoverText">You have $0 to put to work.</div>
+
+        <div class="plan-row">
+          <div class="left">
+            <div class="icon">💎</div>
+            <div>
+              <div class="bill-name">Debt Payoff</div>
+              <div class="bill-meta">Kill debt. Build freedom.</div>
+            </div>
+          </div>
+          <div class="amount" id="debtAmount">$0</div>
+          <input id="debtInput" type="number" min="0" value="500">
+        </div>
+
+        <div class="plan-row">
+          <div class="left">
+            <div class="icon">🐷</div>
+            <div>
+              <div class="bill-name">Savings</div>
+              <div class="bill-meta">Future you will thank you.</div>
+            </div>
+          </div>
+          <div class="amount" id="saveAmount">$0</div>
+          <input id="saveInput" type="number" min="0" value="100">
+        </div>
+
+        <div class="plan-row">
+          <div class="left">
+            <div class="icon">🎮</div>
+            <div>
+              <div class="bill-name">Fun Money</div>
+              <div class="bill-meta">Live a little. You earned it.</div>
+            </div>
+          </div>
+          <div class="amount" id="funAmount">$0</div>
+          <input id="funInput" type="number" min="0" value="500">
+        </div>
+
+        <div class="plan-row">
+          <div class="left">
+            <div class="icon">⛽</div>
+            <div>
+              <div class="bill-name">Gas / Variable</div>
+              <div class="bill-meta">Stay ready. Keep moving.</div>
+            </div>
+          </div>
+          <div class="amount" id="variableAmount">$0</div>
+          <input id="variableInput" type="number" min="0" value="200">
+        </div>
+
+        <button class="primary" style="width:100%; margin-top:12px" onclick="saveAllocations()">Save Plan</button>
+        <div class="total-row">
+          <span>Unassigned</span>
+          <span id="unassignedText">$0</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="income" class="view">
+    <div class="card">
+      <div class="title">
+        <div class="title-left">
+          <div class="title-icon">💵</div>
+          <span>Income Sources</span>
+        </div>
+      </div>
+      <div id="incomeList"></div>
+    </div>
+
+    <div class="card controls">
+      <div class="title">
+        <div class="title-left">
+          <div class="title-icon">➕</div>
+          <span>Add Income</span>
+        </div>
+      </div>
+      <div class="field"><input id="incomeName" placeholder="Example: Weekly paycheck"></div>
+      <div class="row field">
+        <input id="incomeAmount" type="number" min="0" step=".01" placeholder="Amount">
+        <select id="incomeFrequency">
+          <option value="monthly">Monthly</option>
+          <option value="weekly">Weekly</option>
+          <option value="biweekly">Every 2 weeks</option>
+        </select>
+      </div>
+      <button class="primary" style="width:100%; margin-top:12px" onclick="addIncome()">Add Income</button>
+    </div>
+  </section>
+
+  <section id="bills" class="view">
+    <div class="card">
+      <div class="title">
+        <div class="title-left">
+          <div class="title-icon">🏠</div>
+          <span>Your Bills</span>
+        </div>
+      </div>
+      <div id="billManager"></div>
+    </div>
+
+    <div class="card controls">
+      <div class="title">
+        <div class="title-left">
+          <div class="title-icon">➕</div>
+          <span>Add Bill</span>
+        </div>
+      </div>
+      <div class="field"><input id="billName" placeholder="Bill name"></div>
+      <div class="row field">
+        <input id="billAmount" type="number" min="0" step=".01" placeholder="Monthly amount">
+        <input id="billDue" type="number" min="1" max="31" placeholder="Due day">
+      </div>
+      <button class="primary" style="width:100%; margin-top:12px" onclick="addBill()">Add Bill</button>
+    </div>
+  </section>
+
+  <section id="settings" class="view">
+    <div class="card settings-card">
+      <div class="title">
+        <div class="title-left">
+          <div class="title-icon">⚙️</div>
+          <span>Backup</span>
+        </div>
+      </div>
+      <button class="dark" style="width:100%" onclick="exportData()">Export Money Plan</button>
+      <div class="field"><input id="importFile" type="file" accept="application/json"></div>
+      <button class="primary" style="width:100%; margin-top:10px" onclick="importData()">Import Backup</button>
+    </div>
+
+    <div class="card settings-card">
+      <div class="title">
+        <div class="title-left">
+          <div class="title-icon">♻️</div>
+          <span>Reset App</span>
+        </div>
+      </div>
+      <div class="muted">This resets the finance app back to your current bill list, including the $300 child support.</div>
+      <button class="danger" style="width:100%; margin-top:12px" onclick="resetApp()">Reset App</button>
+    </div>
+
+    <div class="note">Open in Safari and add to your Home Screen when you publish it on GitHub Pages.</div>
+  </section>
+</div>
+
+<nav>
+  <div class="nav">
+    <button class="active" onclick="showView('home',this)">Home</button>
+    <button onclick="showView('income',this)">Income</button>
+    <button onclick="showView('bills',this)">Bills</button>
+    <button onclick="showView('settings',this)">Settings</button>
+  </div>
+</nav>
+
+<script>
+const KEY = "dez_money_glow_v2";
+const DEFAULTS = {
+  bills: [
+    {name:"Mortgage", amount:1667, due:""},
+    {name:"Car note", amount:678, due:""},
+    {name:"Electric Bill", amount:450, due:""},
+    {name:"Sofi", amount:330, due:""},
+    {name:"Vzw", amount:276, due:""},
+    {name:"Lowe's", amount:150, due:""},
+    {name:"Pipes", amount:150, due:""},
+    {name:"Water", amount:135, due:""},
+    {name:"Internet", amount:100, due:""},
+    {name:"Car insurance", amount:66, due:""},
+    {name:"Child support", amount:300, due:""}
+  ],
+  incomes: [],
+  allocations: { debt:500, savings:100, fun:500, variable:200 }
+};
+
+let data = JSON.parse(localStorage.getItem(KEY) || "null") || JSON.parse(JSON.stringify(DEFAULTS));
+
+function save(){
+  localStorage.setItem(KEY, JSON.stringify(data));
+}
+
+function money(n){
+  return new Intl.NumberFormat("en-US", {
+    style:"currency",
+    currency:"USD",
+    maximumFractionDigits:0
+  }).format(n || 0);
+}
+
+function monthlyIncome(item){
+  const amount = +item.amount || 0;
+  if(item.frequency === "weekly") return amount * 52 / 12;
+  if(item.frequency === "biweekly") return amount * 26 / 12;
+  return amount;
+}
+
+function totals(){
+  const income = data.incomes.reduce((sum, x) => sum + monthlyIncome(x), 0);
+  const bills = data.bills.reduce((sum, x) => sum + (+x.amount || 0), 0);
+  const available = income - bills;
+  return { income, bills, available };
+}
+
+function esc(str){
+  return String(str || "").replace(/[&<>"']/g, m => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  }[m]));
+}
+
+function render(){
+  const t = totals();
+  const month = new Date().toLocaleDateString(undefined, {month:"long", year:"numeric"});
+
+  document.getElementById("monthText").textContent = `${month} · Available after bills`;
+  document.getElementById("incomeTotal").textContent = money(t.income);
+  document.getElementById("billTotal").textContent = money(t.bills);
+  document.getElementById("availableTotal").textContent = money(t.available);
+  document.getElementById("homeBillsTotal").textContent = money(t.bills);
+  document.getElementById("billCount").textContent = `${data.bills.length} bills`;
+  document.getElementById("billSub").textContent = `${data.bills.length} bills`;
+  document.getElementById("incomeSub").textContent = data.incomes.length ? "Monthly estimate" : "Add your income";
+  document.getElementById("availableSub").textContent = t.available >= 0 ? "Ready to assign" : "Over monthly budget";
+
+  const availableBig = document.getElementById("availableBig");
+  availableBig.textContent = money(Math.abs(t.available)) + (t.available >= 0 ? "" : " short");
+  availableBig.className = "big " + (t.available >= 0 ? "money-pos" : "money-neg");
+
+  document.getElementById("homeBills").innerHTML = data.bills.map(b => `
+    <div class="bill-row">
+      <div>
+        <div class="bill-name">${esc(b.name)}</div>
+        <div class="bill-meta">${b.due ? `Due day ${esc(b.due)}` : "Monthly obligation"}</div>
+      </div>
+      <div class="bill-name">${money(b.amount)}</div>
+    </div>
+  `).join("");
+
+  document.getElementById("incomeList").innerHTML = data.incomes.length ? data.incomes.map((x, i) => `
+    <div class="income-row">
+      <div>
+        <div class="bill-name">${esc(x.name)}</div>
+        <div class="bill-meta">${esc(x.frequency)} · approx ${money(monthlyIncome(x))}/month</div>
+      </div>
+      <div>
+        <span class="bill-name">${money(x.amount)}</span>
+        <button class="small danger inline-remove" onclick="removeIncome(${i})">remove</button>
+      </div>
+    </div>
+  `).join("") : `<div class="muted">No income added yet.</div>`;
+
+  document.getElementById("billManager").innerHTML = data.bills.map((b, i) => `
+    <div class="bill-row">
+      <div>
+        <div class="bill-name">${esc(b.name)}</div>
+        <div class="bill-meta">${money(b.amount)} / month ${b.due ? `· due ${esc(b.due)}` : ""}</div>
+      </div>
+      <button class="small danger" onclick="removeBill(${i})">remove</button>
+    </div>
+  `).join("");
+
+  renderPlan();
+  save();
+}
+
+function renderPlan(){
+  const t = totals();
+  const a = data.allocations;
+  document.getElementById("debtInput").value = a.debt || 0;
+  document.getElementById("saveInput").value = a.savings || 0;
+  document.getElementById("funInput").value = a.fun || 0;
+  document.getElementById("variableInput").value = a.variable || 0;
+
+  document.getElementById("debtAmount").textContent = money(a.debt || 0);
+  document.getElementById("saveAmount").textContent = money(a.savings || 0);
+  document.getElementById("funAmount").textContent = money(a.fun || 0);
+  document.getElementById("variableAmount").textContent = money(a.variable || 0);
+
+  const planned = (+a.debt||0) + (+a.savings||0) + (+a.fun||0) + (+a.variable||0);
+  const unassigned = t.available - planned;
+  document.getElementById("leftoverText").textContent = `You have ${money(t.available)} to put to work.`;
+  document.getElementById("leftoverBadge").textContent = planned ? "Money moves" : "Plan it out";
+
+  const el = document.getElementById("unassignedText");
+  el.textContent = money(unassigned);
+  el.className = unassigned >= 0 ? "money-pos" : "money-neg";
+}
+
+function addIncome(){
+  const name = document.getElementById("incomeName").value.trim();
+  const amount = +document.getElementById("incomeAmount").value;
+  const frequency = document.getElementById("incomeFrequency").value;
+  if(!name || !amount){
+    alert("Enter the income name and amount.");
+    return;
+  }
+  data.incomes.push({name, amount, frequency});
+  document.getElementById("incomeName").value = "";
+  document.getElementById("incomeAmount").value = "";
+  render();
+}
+
+function removeIncome(i){
+  data.incomes.splice(i, 1);
+  render();
+}
+
+function addBill(){
+  const name = document.getElementById("billName").value.trim();
+  const amount = +document.getElementById("billAmount").value;
+  const due = document.getElementById("billDue").value;
+  if(!name || !amount){
+    alert("Enter the bill name and amount.");
+    return;
+  }
+  data.bills.push({name, amount, due});
+  document.getElementById("billName").value = "";
+  document.getElementById("billAmount").value = "";
+  document.getElementById("billDue").value = "";
+  render();
+}
+
+function removeBill(i){
+  if(confirm("Remove this bill?")){
+    data.bills.splice(i, 1);
+    render();
+  }
+}
+
+function saveAllocations(){
+  data.allocations = {
+    debt: +document.getElementById("debtInput").value || 0,
+    savings: +document.getElementById("saveInput").value || 0,
+    fun: +document.getElementById("funInput").value || 0,
+    variable: +document.getElementById("variableInput").value || 0
+  };
+  render();
+}
+
+function exportData(){
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "dez-money-plan-backup.json";
+  a.click();
+}
+
+function importData(){
+  const file = document.getElementById("importFile").files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      data = JSON.parse(e.target.result);
+      render();
+    }catch{
+      alert("Could not read backup.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetApp(){
+  if(confirm("Reset the app back to your current bill list?")){
+    data = JSON.parse(JSON.stringify(DEFAULTS));
+    render();
+  }
+}
+
+function showView(id, btn){
+  document.querySelectorAll(".view").forEach(x => x.classList.remove("active"));
+  document.querySelectorAll("nav button").forEach(x => x.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  btn.classList.add("active");
+}
+
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+
+render();
+</script>
+</body>
+</html>
