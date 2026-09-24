@@ -1,0 +1,10 @@
+{
+  "name": "DEZ FUEL \u2014 Barcode + Custom Water",
+  "short_name": "DEZ FUEL",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080a0f",
+  "theme_color": "#090b12",
+  "description": "Food, macro, water, weight and barcode nutrition tracker with custom water ounce entry."
+}
